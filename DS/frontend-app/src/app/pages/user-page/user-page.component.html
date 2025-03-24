@@ -1,0 +1,37 @@
+<div class="main-content">
+  <h1 class="mb-4">Your Items</h1>
+
+  <div>
+    <label>Select date to show usage</label>
+    <input type="date" [(ngModel)]="selectedDate" id="date" name="date">
+  </div>
+
+  <table class="table">
+    <thead class="thead-dark">
+    <tr>
+      <th scope="col">Device ID</th>
+      <th scope="col">Device Description</th>
+      <th scope="col">Device Address</th>
+      <th scope="col">Device Max Hourly Consumption</th>
+      <th scope="col">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let device of devices">
+      <td>{{ device.id }}</td>
+      <td>{{ device.description }}</td>
+      <td>{{ device.address }}</td>
+      <td>{{ device.maxHourlyConsumption }}</td>
+      <td>
+        <button (click)="getMonitoring(device.id)">Show usage</button>
+    </tr>
+    </tbody>
+  </table>
+  <div class="hidden" id="chartContainer" style="width: 100%; height: 400px;">
+    <canvas id="monitoringChart"></canvas>
+  </div>
+
+  <div>
+    <button (click)="router.navigateByUrl('/chat')">Chat</button>
+  </div>
+</div>

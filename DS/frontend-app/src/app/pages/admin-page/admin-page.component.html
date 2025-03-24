@@ -1,0 +1,125 @@
+<div class="user-operations">
+  <h1><a class="pointer" (click)="toggleUserClick()">User Operations</a></h1>
+  <form *ngIf="isUserTitleClicked">
+    <h3>Add user: </h3>
+    <div class="form-group">
+      <label for="newUserName">Name</label>
+      <input type="text" autocomplete="false" class="form-control" name="newName" id="newUserName"
+             [(ngModel)]="newUser.userName"
+             placeholder="Enter name">
+    </div>
+    <div class="form-group">
+      <label for="newUserPassword">Password</label>
+      <input type="password" class="form-control" name="newPassword" id="newUserPassword" [(ngModel)]="newUser.password"
+             placeholder="Enter password">
+    </div>
+    <div class="form-group">
+      <label for="newUserRole">Role</label>
+      <select class="form-control" name="newRole" id="newUserRole" [(ngModel)]="newUser.role">
+        <option value="" selected disabled hidden>Select role...</option>
+        <option value="admin">Admin</option>
+        <option value="user">User</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary" (click)="addUser()">Add User</button>
+  </form>
+  <h3 *ngIf="isUserTitleClicked">Edit Users:</h3>
+  <table class="table" *ngIf="isUserTitleClicked">
+    <thead>
+    <tr>
+      <th scope="col">Id</th>
+      <th scope="col">Name</th>
+      <th scope="col">Role</th>
+      <th scope="col" class="right-align">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let user of users; let i=index">
+      <td class="static-input"><input autocomplete="false" [disabled]="true" type="text" [(ngModel)]="user.id"
+                                      class="form-control"></td>
+      <td class="static-input"><input autocomplete="false" [disabled]="isEditClicked !== i" type="text"
+                                      [(ngModel)]="user.userName" class="form-control"></td>
+      <td class="static-input">
+        <select [disabled]="isEditClicked !== i" [(ngModel)]="user.role" class="form-control">
+          <option value="admin">Admin</option>
+          <option value="user">User</option>
+        </select>
+      </td>
+      <td class="right-align">
+        <button *ngIf="isEditClicked !== i" class="spaced btn btn-primary" (click)="clickEdit(i)">Edit</button>
+        <button *ngIf="isEditClicked === i" class="spaced btn btn-primary" (click)="editUser(user)">Submit</button>
+        <button class="spaced btn btn-danger" (click)="deleteAction(user.id)">Delete</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+<div class="user-operations">
+  <h1><a class="pointer" (click)="toggleDeviceClick()">Device Operations</a></h1>
+  <form *ngIf="isDeviceTitleClicked">
+    <h3>Add user: </h3>
+    <div class="form-group">
+      <label for="desc">Description</label>
+      <input type="text" autocomplete="false" class="form-control" id="desc" name="desc"
+             [(ngModel)]="newDevice.description"
+             placeholder="Enter description">
+    </div>
+    <div class="form-group">
+      <label for="address">Address</label>
+      <input autocomplete="false" type="text" class="form-control" name="address" id="address"
+             [(ngModel)]="newDevice.address"
+             placeholder="Enter address">
+    </div>
+    <div class="form-group">
+      <label for="consumption">Max Hourly Consumption</label>
+      <input autocomplete="false" type="text" class="form-control" name="consumption" id="consumption"
+             [(ngModel)]="newDevice.maxHourlyConsumption"
+             placeholder="Enter consumption">
+    </div>
+    <div class="form-group">
+      <label for="userId">Assigned User</label>
+      <select [(ngModel)]="newDevice.userId" class="form-control" id="userId" name="assignedUserId">
+        <option *ngFor="let user of users" [value]="user.id">{{ user.userName }}</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary" (click)="addDevice()">Add Device</button>
+  </form>
+  <h3 *ngIf="isDeviceTitleClicked">Edit Devices:</h3>
+  <table class="table" *ngIf="isDeviceTitleClicked">
+    <thead>
+    <tr>
+      <th scope="col">Id</th>
+      <th scope="col">Description</th>
+      <th scope="col">Address</th>
+      <th scope="col">Max Hourly Consumption</th>
+      <th scope="col">Assigned User</th>
+      <th scope="col" class="right-align">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let device of devices; let i=index">
+      <td class="static-input"><input autocomplete="false" [disabled]="true" type="text" [(ngModel)]="device.id"
+                                      class="form-control"></td>
+      <td class="static-input"><input autocomplete="false" [disabled]="isDeviceEditClicked !== i" type="text"
+                                      [(ngModel)]="device.description" class="form-control"></td>
+      <td class="static-input"><input autocomplete="false" [disabled]="isDeviceEditClicked !== i" type="text"
+                                      [(ngModel)]="device.address" class="form-control"></td>
+      <td class="static-input"><input autocomplete="false" [disabled]="isDeviceEditClicked !== i" type="text"
+                                      [(ngModel)]="device.maxHourlyConsumption" class="form-control"></td>
+      <td class="static-input">
+        <select [disabled]="isDeviceEditClicked !== i" [(ngModel)]="device.userId" class="form-control">
+          <option value="" selected disabled hidden>{{ device.userId }}</option>
+          <option *ngFor="let user of users" [value]="user.id">{{ user.userName }}</option>
+        </select>
+      </td>
+      <td class="right-align">
+        <button *ngIf="isDeviceEditClicked !== i" class="spaced btn btn-primary" (click)="clickDeviceEdit(i)">Edit
+        </button>
+        <button *ngIf="isDeviceEditClicked === i" class="spaced btn btn-primary" (click)="editDevice(device)">Submit
+        </button>
+        <button class="spaced btn btn-danger" (click)="deleteDeviceAction(device.id)">Delete</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

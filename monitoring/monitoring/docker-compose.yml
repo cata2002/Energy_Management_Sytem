@@ -1,0 +1,60 @@
+version: "3.7"
+services:
+  api_service:
+    build: .
+    restart: always
+    networks:
+      - spring-net
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://monitoringdb:3306/monitoring?allowPublicKeyRetrieval=true
+      - SPRING_RABBITMQ_HOST=kangaroo.rmq.cloudamqp.com
+      - SPRING_RABBITMQ_PORT=5671
+      - SPRING_RABBITMQ_USERNAME=marbaffn
+      - SPRING_RABBITMQ_PASSWORD=XZqeOZenkbJaN0OSjDyzRjnR1TL97awY
+      - SPRING_RABBITMQ_VIRTUAL_HOST=marbaffn
+      - SPRING_RABBITMQ_SSL_ENABLED=true
+      - SPRING_RABBITMQ_SSL_VERIFY_HOSTNAME=true
+      - SPRING_RABBITMQ_SSL_ALGORITHM=TLSv1.2
+      - SPRING_RABBITMQ_QUEUE=sensor_data_queue
+    depends_on:
+      - monitoringdb
+    ports:
+      - "8082:8082"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api-monitoring.rule=Host(`monitoring.localhost`)"
+      - "traefik.http.services.api-monitoring.loadbalancer.server.port=8082"
+    volumes:
+#      - .m2:/root/.m2
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  reverse_proxy:
+    image: traefik:v3.2
+    command:
+      - --api.insecure=true
+      - --providers.docker
+      - --entrypoints.web.address=:80
+      - --entrypoints.traefik.address=:8080
+    ports:
+      - "82:80"
+      - "8081:8080"
+    networks:
+      - spring-net
+    volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+
+
+  monitoringdb:
+    image: "mysql:8.0"
+    restart: always
+    ports:
+      - 3304:3306
+    networks:
+      - spring-net
+    environment:
+      MYSQL_DATABASE: monitoring
+      MYSQL_ROOT_USER: root
+      MYSQL_ROOT_PASSWORD: cata2002
+
+networks:
+  spring-net:

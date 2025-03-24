@@ -1,0 +1,48 @@
+version: "3.7"
+services:
+  api_user_service:
+    build: .
+    restart: always
+    networks:
+      - springapi-net
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://usersdb:3306/users?allowPublicKeyRetrieval=true
+    depends_on:
+      - usersdb
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api-user.rule=Host(`user.localhost`)"
+      - "traefik.http.services.api-user.loadbalancer.server.port=8080"
+    volumes:
+#      - .m2:/root/.m2/users
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      replicas: 2
+
+  reverse_proxy:
+    image: traefik:v3.2
+    command:
+      - --api.insecure=true
+      - --providers.docker=true
+      - --entrypoints.web.address=:80
+    ports:
+      - "80:80"
+    networks:
+        - springapi-net
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  usersdb:
+    image: "mysql:8.0"
+    restart: always
+    ports:
+      - 3305:3306
+    networks:
+      - springapi-net
+    environment:
+      MYSQL_DATABASE: users
+      MYSQL_ROOT_USER: root
+      MYSQL_ROOT_PASSWORD: cata2002
+
+networks:
+  springapi-net:
